@@ -1,3 +1,4 @@
+# -*- coding: cp1252 -*-
 import random
 
 class Carta:
@@ -52,17 +53,44 @@ class Deck:
             self.cards.remove(self.cards[i])
         return retorno
 
+    def get_vira(self):
+        retorno = self.cards[0]
+        self.cards.remove(self.cards[0])
+        return retorno
+
 class Player:
     def __init__(self):
-        self.hand = []
+        self.hands = []
+    def add_hand_for_player(self, hand):
+        self.hands.append(hand)
     def add_card_to_hand(self, carta):
-        self.hand.append(carta)
+        i = 0
+        while (True):
+            if self.hands[i].rodada > 3:
+                i+=1
+            else:
+                break
+        self.hands[i].add_card(carta)
         
+class Hand:
+    
+    def __init__(self):
+        self.hand = []
+        self.point = 1
+        self.rodada = 1
+        
+    def add_card(self, carta):
+        self.hand.append(carta)
+    
 j = Deck()
 p = Player()
+hand = Hand()
+p.add_hand_for_player(hand)
 for i in j.cards:
     print(i)
 print('---')
 for i in j.get_three_cards():
     p.add_card_to_hand(i)
-print(p.hand)
+print(p.hands[0])
+print(p.hands[0].hand[1]
+)
