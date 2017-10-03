@@ -1,11 +1,13 @@
-# -*- coding: cp1252 -*- import random
+# -*- coding: cp1252 -*-
+import random
 
 class Carta:
 
-    def __init__(self, valor, naipe):
+    def __init__(self, valor, naipe, visibilidade=True):
         self.valor = valor
         self.naipe = naipe
         self.power = self.card_power()
+        self.set_visibilidade(visibilidade)
 
     def __str__(self): #função para impressão do objeto
         valor = self.valor
@@ -32,8 +34,13 @@ class Carta:
                 naipe = 'Paus'
         else:
             return 'Naipe invalido'
-        return str(valor) + ' de ' + str(naipe) + 'Poder dela é de ' + str(self.power)
+        return str(valor) + ' de ' + str(naipe) + ', O poder dela é de ' + str(self.power)
 
+    def set_visibilidade(self, visibilidade):
+        self.visibilidade = visibilidade
+        if visibilidade == False:
+            self.power = 0
+        
     def card_power(self): #função para ter o valor que a carta vale
         if self.valor == 4:
             return 1
@@ -61,6 +68,7 @@ class Carta:
             return 12
         elif self.valor == 3:
             return 13
+    __repr__ = __str__
         
 
 class Deck:
@@ -103,6 +111,27 @@ class Player:
                 break
         self.hands[i].add_card(carta)
         
+    def remove_card_to_hand(self, posicao): #Retornar e retirar uma carta da mão de acordo com sua posição(1,12)
+        i = 0
+        while (True): #Se a mão for menor ou igual a rodada 3, remove a carta. Caso não seja pula p proxima pq essa já fechou a qnt maxima de rodadas
+            if self.hands[i].rodada > 3:
+                i+=1
+                ### Terminar 
+            else:
+                break
+        return self.hands[i].hand.pop(self.hands[i].hand[posicao])
+
+    def __str__(self): # Função para imprimir mão atual
+        i = 0
+        while (True):
+            if self.hands[i].rodada > 3:
+                i+=1
+            else:
+                break
+        string = (self.hands[i].hand.__str__())
+        return string
+    __repr__ = __str__
+        
 class Hand:
     
     def __init__(self):
@@ -112,7 +141,13 @@ class Hand:
         
     def add_card(self, carta): #Função para adicionar a carta na mão
         self.hand.append(carta)
-
+        
+    def __str__(self): #função para impressão do objeto
+        string = ''
+        for i in self.hand:
+            string += str(i) + '\n'
+        return string
+    __repr__ = __str__
 class partida:
 
     def vitory_verify(self, player):
@@ -131,7 +166,6 @@ class Rodada:
         manilha = self.get_manilha(vira)
         cartas = [cardp1.power, cardp2.power, cardp3.power, cardp4.power]
         value = max(cartas)
-        print(value)
         if not(manilha.power in cartas):
    
             if cartas.count(value) == 1:
@@ -200,6 +234,17 @@ class Rodada:
         return manilha
     
 
+
+class Game: #classe para iniciar o jogo
+
+    def __init__(self, deck, p1, p2, p3, p4):
+        self.deck = Deck()
+        self.p1 = p1
+        self.p2 = p2
+        self.p3 = p3
+        self.p4 = p4
+    
+
 #Area de testes    
 j = Deck()
 p = Player()
@@ -217,10 +262,13 @@ r = Rodada()
 a = r.win(j.cards[0],j.cards[1],j.cards[2],j.cards[3],j.cards[4])
 print(a)
 print('---')
-carta1 = Carta(1, 1)
+carta1 = Carta(2, 1)
 carta2 = Carta(11, 4)
 carta3 = Carta(1,4)
-carta4 = Carta(11, 2)
+carta4 = Carta(3, 2)
 vira = Carta(99,2)
 a = r.win(vira,carta1,carta2,carta3,carta4)
 print (a)
+print('-------')
+
+print(p)
