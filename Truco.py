@@ -9,7 +9,7 @@ class Carta:
         self.power = self.card_power()
         self.set_visibilidade(visibilidade)
 
-    def __str__(self): #função para impressão do objeto
+    def __str__(self): #Função para impressão do objeto
         valor = self.valor
         naipe = self.naipe
         if valor <=13  and valor>0:
@@ -36,12 +36,12 @@ class Carta:
             return 'Naipe invalido'
         return str(valor) + ' de ' + str(naipe) + ', O poder dela é de ' + str(self.power)
 
-    def set_visibilidade(self, visibilidade):
+    def set_visibilidade(self, visibilidade): #Função para definir a visibilidade
         self.visibilidade = visibilidade
         if visibilidade == False:
             self.power = 0
         
-    def card_power(self): #função para ter o valor que a carta vale
+    def card_power(self): #Função para ter o valor que a carta vale
         if self.valor == 4:
             return 1
         elif self.valor == 5:
@@ -113,13 +113,13 @@ class Player:
         
     def remove_card_to_hand(self, posicao): #Retornar e retirar uma carta da mão de acordo com sua posição(1,12)
         i = 0
+        posicao -=1
         while (True): #Se a mão for menor ou igual a rodada 3, remove a carta. Caso não seja pula p proxima pq essa já fechou a qnt maxima de rodadas
             if self.hands[i].rodada > 3:
                 i+=1
-                ### Terminar 
             else:
                 break
-        return self.hands[i].hand.pop(self.hands[i].hand[posicao])
+        return self.hands[i].hand.pop(posicao)
 
     def __str__(self): # Função para imprimir mão atual
         i = 0
@@ -142,7 +142,7 @@ class Hand:
     def add_card(self, carta): #Função para adicionar a carta na mão
         self.hand.append(carta)
         
-    def __str__(self): #função para impressão do objeto
+    def __str__(self): #Função para impressão do objeto
         string = ''
         for i in self.hand:
             string += str(i) + '\n'
@@ -152,7 +152,7 @@ class partida:
 
     def vitory_verify(self, player):
         flag = False
-        for i in player.hands: #percorrer as mãos dos jogadores
+        for i in player.hands: #Percorrer as mãos dos jogadores
             cont = 0
             for j in i: #Percorrer uma mão em especifica
                 cont+= i.point
@@ -226,7 +226,7 @@ class Rodada:
                     return 2 #Dupla 2 ganhou
                 
             
-    def get_manilha(self, vira):        
+    def get_manilha(self, vira):   #Função para retornar a manilha     
         manilha = vira.valor+1
         if manilha > 13:
             manilha = manilha - 13
@@ -235,7 +235,7 @@ class Rodada:
     
 
 
-class Game: #classe para iniciar o jogo
+class Game: #Classe para iniciar o jogo
 
     def __init__(self, deck, p1, p2, p3, p4):
         self.deck = Deck()
@@ -271,4 +271,7 @@ a = r.win(vira,carta1,carta2,carta3,carta4)
 print (a)
 print('-------')
 
+print(p)
+as = p.remove_card_to_hand(0)
+print(as)
 print(p)
