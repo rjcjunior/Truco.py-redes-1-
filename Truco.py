@@ -1,5 +1,7 @@
 # -*- coding: cp1252 -*-
 import random
+from socket import *
+
 
 class Carta:
 
@@ -34,7 +36,7 @@ class Carta:
                 naipe = 'Paus'
         else:
             return 'Naipe invalido'
-        return str(valor) + ' de ' + str(naipe) + ', O poder dela é de ' + str(self.power)
+        return str(valor) + ' de ' + str(naipe) + ', O poder dela eh de ' + str(self.power)
 
     def set_visibilidade(self, visibilidade): #Função para definir a visibilidade
         self.visibilidade = visibilidade
@@ -237,41 +239,53 @@ class Rodada:
 
 class Game: #Classe para iniciar o jogo
 
-    def __init__(self, deck, p1, p2, p3, p4):
+    def __init__(self):
         self.deck = Deck()
-        self.p1 = p1
-        self.p2 = p2
-        self.p3 = p3
-        self.p4 = p4
+        self.jogadores = []
+        for i in range(0,4):
+            aux = Player()
+            self.jogadores.append(aux)
+    
+                
+    
+serverPort = 12000
+serverSocket = socket(AF_INET, SOCK_STREAM)
+serverSocket.bind(('', serverPort))
+serverSocket.listen(4)
+
+listaconexoes = []
+flag = False #Flag para verificar se pode não pode começar
+flag1 = False #Flag para iniciar a variavel de game
+contRodada = 0 #contador para verificar número de rodas
+while 1:
+     print ('Aguardando conexao...')
+     connectionSocket, addr = serverSocket.accept()
+     print ('Nova conexao recebida!')
+     listaconexoes.append(connectionSocket)     
+     if (len(listaconexoes) != 4):
+         for i in listaconexoes:
+             i.send(('0').encode('utf-8')) #Não pode começar
+     else: 
+         for i in listaconexoes:
+             i.send(('1').encode('utf-8')) #Envia autorização para começar
+         flag = True
+     if (flag):
+        if (flag1 != True):
+            game  = Game() #Iniciar o jogo
+            flag1 = True
+
+        if (contRodada%3 == 0): #controla criação de mão a cada 3 rodadas
+            for i in range (0,4):
+                h = Hand()
+                game.jogadores[i].add_hand_for_player(h) #criando mão para cada jogador          
+        for jogador in game.jogadores:
+            for carta in game.deck.get_three_cards():
+                jogador.add_card_to_hand(carta)
+        for i in range(0,4):
+           listaconexoes[i].send((game.jogadores[i].__str__()).encode('utf-8'))
     
 
-#Area de testes    
-j = Deck()
-p = Player()
-hand = Hand()
-p.add_hand_for_player(hand)
-for i in j.cards:
-    print(i)
-print('---')
-for i in j.get_three_cards():
-    p.add_card_to_hand(i)
-print(p.hands[0])
-print(p.hands[0].hand[1]) 
-print('-------')
-r = Rodada()
-a = r.win(j.cards[0],j.cards[1],j.cards[2],j.cards[3],j.cards[4])
-print(a)
-print('---')
-carta1 = Carta(2, 1)
-carta2 = Carta(11, 4)
-carta3 = Carta(1,4)
-carta4 = Carta(3, 2)
-vira = Carta(99,2)
-a = r.win(vira,carta1,carta2,carta3,carta4)
-print (a)
-print('-------')
 
-print(p)
-as = p.remove_card_to_hand(0)
-print(as)
-print(p)
+connectionSocket.close()
+
+
