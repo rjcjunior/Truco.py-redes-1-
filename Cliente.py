@@ -43,11 +43,11 @@ for i in range(0,4):
 
     if (i==3):
         fimJogo=False
-
+		
 
 while (fimJogo==False):
     for i in mesaJogadores:
-        print (i.conexao.recv(1024))
+        print (i.conexao.recv(1))
     
 #print('Vamos começar!')
 #toda a lógica do jogo aqui.
