@@ -12,12 +12,12 @@ class Carta:
         self.power = self.card_power()
         self.set_visibilidade(visibilidade)
 
-    def __str__(self): #FunÁ„o para impress„o do objeto
+    def __str__(self): #Fun√ß√£o para impress√£o do objeto
         valor = self.valor
         naipe = self.naipe
         if valor <=13  and valor>0:
             if valor == 1:
-                valor = '¡s'
+                valor = '√Ås'
             elif valor == 11:
                 valor = 'Dama'
             elif valor == 12:
@@ -39,12 +39,12 @@ class Carta:
             return 'Naipe invalido'
         return str(valor) + ' de ' + str(naipe) + ', O poder dela eh de ' + str(self.power)
 
-    def set_visibilidade(self, visibilidade): #FunÁ„o para definir a visibilidade
+    def set_visibilidade(self, visibilidade): #Fun√ß√£o para definir a visibilidade
         self.visibilidade = visibilidade
         if visibilidade == False:
             self.power = 0
         
-    def card_power(self): #FunÁ„o para ter o valor que a carta vale
+    def card_power(self): #Fun√ß√£o para ter o valor que a carta vale
         if self.valor == 4:
             return 1
         elif self.valor == 5:
@@ -79,52 +79,52 @@ class Deck:
         self.cards = [] #Deck tem um array de cartas
         self.start_deck() 
 
-    def start_deck(self): #Inicia o deck e j· o embaralha
+    def start_deck(self): #Inicia o deck e j√° o embaralha
         for i in range (1,5):
             for j in range(1,14):
                 carta = Carta(j,i)
                 self.cards.append(carta)
         random.shuffle(self.cards)
     
-    def get_three_cards(self): #FunÁ„o para retirar e retornar 3 cartas do baralho
+    def get_three_cards(self): #Fun√ß√£o para retirar e retornar 3 cartas do baralho
         retorno = []
         for i in range(0,3):
             retorno.append(self.cards[i])
             self.cards.remove(self.cards[i])
         return retorno
 
-    def get_vira(self): #FunÁ„o para tirar uma carta do baralho e retornar ela, usar para tirar a carta vira
+    def get_vira(self): #Fun√ß√£o para tirar uma carta do baralho e retornar ela, usar para tirar a carta vira
         retorno = self.cards[0]
         self.cards.remove(self.cards[0])
         return retorno
     
 class Player:
     def __init__(self):
-        self.hands = [] #Jogador tem um array de m„os, pq cada 3 rodadas, precisaremos de uma nova m„o
+        self.hands = [] #Jogador tem um array de m√£os, pq cada 3 rodadas, precisaremos de uma nova m√£o
 
-    def add_hand_for_player(self, hand): #FunÁ„o para adicionar a m„o ao jogador
+    def add_hand_for_player(self, hand): #Fun√ß√£o para adicionar a m√£o ao jogador
         self.hands.append(hand) 
 
-    def add_card_to_hand(self, carta): #FunÁ„o para adicionar a carta na m„o atual do jogador
+    def add_card_to_hand(self, carta): #Fun√ß√£o para adicionar a carta na m√£o atual do jogador
         i = 0
-        while (True): #Se a m„o for menor ou igual a rodada 3, adiciona a carta. Caso n„o seja pula p proxima pq essa j· fechou a qnt maxima de rodadas
+        while (True): #Se a m√£o for menor ou igual a rodada 3, adiciona a carta. Caso n√£o seja pula p proxima pq essa j√° fechou a qnt maxima de rodadas
             if self.hands[i].rodada > 3:
                 i+=1
             else:
                 break
         self.hands[i].add_card(carta)
         
-    def remove_card_to_hand(self, posicao): #Retornar e retirar uma carta da m„o de acordo com sua posiÁ„o(1,12)
+    def remove_card_to_hand(self, posicao): #Retornar e retirar uma carta da m√£o de acordo com sua posi√ß√£o(1,12)
         i = 0
         posicao -=1
-        while (True): #Se a m„o for menor ou igual a rodada 3, remove a carta. Caso n„o seja pula p proxima pq essa j· fechou a qnt maxima de rodadas
+        while (True): #Se a m√£o for menor ou igual a rodada 3, remove a carta. Caso n√£o seja pula p proxima pq essa j√° fechou a qnt maxima de rodadas
             if self.hands[i].rodada > 3:
                 i+=1
             else:
                 break
         return self.hands[i].hand.pop(posicao)
 
-    def __str__(self): # FunÁ„o para imprimir m„o atual
+    def __str__(self): # Fun√ß√£o para imprimir m√£o atual
         i = 0
         while (True):
             if self.hands[i].rodada > 3:
@@ -138,14 +138,14 @@ class Player:
 class Hand:
     
     def __init__(self):
-        self.hand = [] #Lista de cartas na m„o
-        self.point = 1 #Pontos da m„o
+        self.hand = [] #Lista de cartas na m√£o
+        self.point = 1 #Pontos da m√£o
         self.rodada = 1 #Flag para contar o numero de rodadas
         
-    def add_card(self, carta): #FunÁ„o para adicionar a carta na m„o
+    def add_card(self, carta): #Fun√ß√£o para adicionar a carta na m√£o
         self.hand.append(carta)
         
-    def __str__(self): #FunÁ„o para impress„o do objeto
+    def __str__(self): #Fun√ß√£o para impress√£o do objeto
         string = ''
         for i in self.hand:
             string += str(i) + '\n'
@@ -155,9 +155,9 @@ class partida:
 
     def vitory_verify(self, player):
         flag = False
-        for i in player.hands: #Percorrer as m„os dos jogadores
+        for i in player.hands: #Percorrer as m√£os dos jogadores
             cont = 0
-            for j in i: #Percorrer uma m„o em especifica
+            for j in i: #Percorrer uma m√£o em especifica
                 cont+= i.point
             if cont>=12:
                 flag = True
@@ -229,7 +229,7 @@ class Rodada:
                     return 2 #Dupla 2 ganhou
                 
             
-    def get_manilha(self, vira):   #FunÁ„o para retornar a manilha     
+    def get_manilha(self, vira):   #Fun√ß√£o para retornar a manilha     
         manilha = vira.valor+1
         if manilha > 13:
             manilha = manilha - 13
@@ -247,6 +247,16 @@ class Game: #Classe para iniciar o jogo
             aux = Player()
             self.jogadores.append(aux)
     
+
+#Fun√ß√£o para realizar a leitura correta das mensagens recebidas.
+def ler_msg(bytesRecebidos,data):
+    qtdArmazenada = bytesRecebidos #quantidade de bytes j√° recebidos por aquela conex√£o  
+    qtdRecebida = len(data) # contar quantidades de bytes (atual msgs_antigas+msg_nova)
+
+    data = data.decode() # passando mensagem em bytes para string
+    
+    msgEsperada = data[(qtdArmazenada-1):] #corta a string a partir da quantidade ja recebida at√© o final
+    return msgEsperada
                 
     
 serverPort = 12000
@@ -256,9 +266,9 @@ serverSocket.listen(4)
 
 
 listaconexoes = []
-flag = False #Flag para verificar se pode n„o pode comeÁar
+flag = False #Flag para verificar se pode n√£o pode come√ßar
 flag1 = False #Flag para iniciar a variavel de game
-contRodada = 0 #contador para verificar n˙mero de rodas
+contRodada = 0 #contador para verificar n√∫mero de rodas
 
 #msg = 'variavel pra troca de mensagens' #variavel para controlar troca de mensagens 
 
@@ -269,7 +279,7 @@ while 1:
      listaconexoes.append(connectionSocket)
 
 
-     ###VERIFICANDO SE H¡ 4 CONEX’ES PARA INICIAR O JOGO 
+     ###VERIFICANDO SE H√Å 4 CONEX√ïES PARA INICIAR O JOGO 
      if (len(listaconexoes) < 4):
          x = '0'
          mensagem= x.encode('utf-8')
@@ -280,33 +290,32 @@ while 1:
          listaconexoes[(len(listaconexoes)-1)].send(mensagem)
          flag = True
          
-     print ('Status da autorizaÁ„o 1 para sim e 0 para n„o: ',mensagem) #informando status do servidor
-    # print ('Respotas do cliente: ', listaconexoes[(len(listaconexoes))].recv(1024)) #se possÌvel tentar fazer o servidor ouvir o clientes (n„o est· funcionando ainda)
+     print ('Status da autoriza√ß√£o 1 para sim e 0 para n√£o: ',mensagem) #informando status do servidor
+    # print ('Respotas do cliente: ', listaconexoes[(len(listaconexoes))].recv(1024)) #se poss√≠vel tentar fazer o servidor ouvir o clientes (n√£o est√° funcionando ainda)
          
      if (flag):
         if (flag1 != True):
             game  = Game() #Iniciar o jogo
             flag1 = True
             print ('Todos os jogadores online. Servidor pronto para gerenciar o jogo')
-            for i in listaconexoes:
-                i.send(('AGORA VAI !!!').encode('utf-8'))
-
+        while True: #Um loop para repetir todo o jogo, evitando fazer a nova conex√£o e criar um jogo novo
+            if (contRodada%3 == 0): #controla cria√ß√£o de m√£o a cada 3 rodadas
+                for i in range (0,4):                
+                    h = Hand()
+                    game.jogadores[i].add_hand_for_player(h) #criando m√£o para cada jogador          
+            for jogador in game.jogadores:
             
-'''RICARDO ESSE … O C”DIGO DE DISTRIBUIR A M√O
-        if (contRodada%2 == 0): #controla criaÁ„o de m„o a cada 3 rodadas
-            for i in range (0,2):
-            #for i in range (0,4):                
-                h = Hand()
-                game.jogadores[i].add_hand_for_player(h) #criando m„o para cada jogador          
-        for jogador in game.jogadores:
-            for carta in game.deck.get_three_cards():
-                jogador.add_card_to_hand(carta)
-        for i in range(0,2):
-        #for i in range(0,4):            
-           listaconexoes[i].send((game.jogadores[i].__str__()).encode('utf-8'))
-'''    
+                for carta in game.deck.get_three_cards():
+                    jogador.add_card_to_hand(carta)
+            for i in range(0,4):#Enviar m√£o para o jogador            
+               listaconexoes[i].send((game.jogadores[i].__str__()).encode('utf-8'))
+            print('------------')
+            for i in range(0,4): #imprimir escolha de carta do jogador
+                print(listaconexoes[i].recv(1024))
+            #Fazer o vencendor da rodada
+            #Fazer menu de truco ou retrucar
+            
 
 
-connectionSocket.close()
-
+        
 
