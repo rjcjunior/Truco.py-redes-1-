@@ -5,8 +5,8 @@ import sys
 #Req1: O cliente deverá receber como entrada um endereço ip (ou nome de host) e um número de porta. 
 
 def  conecta_server(): #criação de função para conectar com servidor
-    serverName = input('Digite o IP do servidor:')
-    serverPort = int(input('Digite a porta do servidor:'))
+    serverName = 'localhost'
+    serverPort = 12000
 
     #criacao do socket
     clientSocket = socket(AF_INET, SOCK_STREAM,0)
@@ -56,7 +56,7 @@ for i in range(0,4):
     if (autorizacao==b'0'):
         print('A mesa ainda não está completa. Aguardando mais',numMinJogadores,'jogadores...')
         numMinJogadores=numMinJogadores-1
-        conexao.send(('Ok, no aguardo').encode('utf-8')) #cliente informa que ouviu servidor
+        
     if (autorizacao==b'1'):
         print('Vamos começar!')
         fimJogo=False #variável de permissão para iniciar o jogo no cliente 
@@ -65,16 +65,17 @@ for i in range(0,4):
 
 while (fimJogo==False):
     
-    
-    for i in mesaJogadores:
-           
+    cont = 0
+    for i in mesaJogadores: #For para exibir as cartas
         data = i.conexao.recv(1024) #cliente escuta servidor
-        print ('mensagem com buffer acumulado: ', data)
-        
         print ('mensagem com leitura correta de buffer: ',ler_msg(i.bytesRecebidos,data)) #exibe última mensagem
-        
-
-
+        mesaJogadores[cont].bytesRecebidos += len(data)
+        cont +=1
+    for i in range(0,4): #Escolher uma carta da mão
+        print('')
+        cartaEscolhida = input("Escolha uma carta (1 a 3), Jogador " + mesaJogadores[i].nomeJogador)
+        mesaJogadores[i].conexao.send(cartaEscolhida.encode('utf-8'))
+    
 
 	
 
