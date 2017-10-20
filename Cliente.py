@@ -1,4 +1,5 @@
 from socket import *
+import sys
 
 
 #Req1: O cliente deverá receber como entrada um endereço ip (ou nome de host) e um número de porta. 
@@ -8,7 +9,7 @@ def  conecta_server(): #criação de função para conectar com servidor
     serverPort = int(input('Digite a porta do servidor:'))
 
     #criacao do socket
-    clientSocket = socket(AF_INET, SOCK_STREAM)
+    clientSocket = socket(AF_INET, SOCK_STREAM,0)
 
     # Conexao com o servidor
     clientSocket.connect((serverName,serverPort))
@@ -20,37 +21,60 @@ def  conecta_server(): #criação de função para conectar com servidor
 
 class Jogador:  #classe jogador para armazenar nome e conexão
 
-	def __init__(self, nomeJogador, conexao):
+	def __init__(self, nomeJogador, conexao, bytesRecebidos):
 		self.nomeJogador = nomeJogador
 		self.conexao = conexao
+		self.bytesRecebidos = bytesRecebidos #número de bytes recebidos pela conexão  
 
+
+#Função para realizar a leitura correta das mensagens recebidas.
+def ler_msg(bytesRecebidos,data):
+    qtdArmazenada = bytesRecebidos #quantidade de bytes já recebidos por aquela conexão  
+    qtdRecebida = len(data) # contar quantidades de bytes (atual msgs_antigas+msg_nova)
+
+    data = data.decode() # passando mensagem em bytes para string
+    
+    msgEsperada = data[(qtdArmazenada-1):] #corta a string a partir da quantidade ja recebida até o final
+    return msgEsperada
 
 
 mesaJogadores = [] #array para montar a mesa da partida
-aux = 3 #variavel auxiliar no controle de jogadores
+numMinJogadores = 3 #variavel auxiliar no controle de jogadores
+
 
 for i in range(0,4):
 
+    #### REALIZANDO CONEXÃO E ARMAZENANDO JOGADOR 
     nome = input('Digite seu nome: ')
-    conexao = conecta_server()
-    j = Jogador(nome, conexao)
-    mesaJogadores.append(j) #mesa recebe jogadores 
-    #verificar autorização de início do jogo 
+    conexao = conecta_server() #realiza conexão com servidor 
+    j = Jogador(nome, conexao, 0) #cria jogador
     autorizacao = conexao.recv(1024) #autorização do server se o jogo deve começar ou não
-    if (autorizacao==b'0'):
-        print('A mesa ainda não está completa. Aguardando mais',aux,'jogadores...')
-        aux=aux-1
+    j.bytesRecebidos = j.bytesRecebidos+len(autorizacao) #armazenando a quantidade de bytes recebidos
+    mesaJogadores.append(j) #mesa recebe jogadores
 
-    if (i==3):
-        fimJogo=False
+    ### VERIFICAÇÃO SE TODOS OS JOGADORES ESTÃO ONLINE
+    if (autorizacao==b'0'):
+        print('A mesa ainda não está completa. Aguardando mais',numMinJogadores,'jogadores...')
+        numMinJogadores=numMinJogadores-1
+        conexao.send(('Ok, no aguardo').encode('utf-8')) #cliente informa que ouviu servidor
+    if (autorizacao==b'1'):
+        print('Vamos começar!')
+        fimJogo=False #variável de permissão para iniciar o jogo no cliente 
+        
 		
 
 while (fimJogo==False):
-    for i in mesaJogadores:
-        print (i.conexao.recv(1))
     
-#print('Vamos começar!')
-#toda a lógica do jogo aqui.
+    
+    for i in mesaJogadores:
+           
+        data = i.conexao.recv(1024) #cliente escuta servidor
+        print ('mensagem com buffer acumulado: ', data)
+        
+        print ('mensagem com leitura correta de buffer: ',ler_msg(i.bytesRecebidos,data)) #exibe última mensagem
+        
+
+
 
 	
 

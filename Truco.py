@@ -1,6 +1,7 @@
 # -*- coding: cp1252 -*-
 import random
 from socket import *
+from sys import *
 
 
 class Carta:
@@ -253,47 +254,57 @@ serverSocket = socket(AF_INET, SOCK_STREAM)
 serverSocket.bind(('', serverPort))
 serverSocket.listen(4)
 
+
 listaconexoes = []
 flag = False #Flag para verificar se pode não pode começar
 flag1 = False #Flag para iniciar a variavel de game
 contRodada = 0 #contador para verificar número de rodas
 
-msg = 'variavel pra troca de mensagens' #variavel para controlar troca de mensagens 
+#msg = 'variavel pra troca de mensagens' #variavel para controlar troca de mensagens 
 
-while 1:
+while 1:         
      print ('Aguardando conexao...')
      connectionSocket, addr = serverSocket.accept()
      print ('Nova conexao recebida!')
-     listaconexoes.append(connectionSocket)     
-     if (len(listaconexoes) != 4):
-         for i in listaconexoes:
-             msg = '0'
-             tamanho = len(msg)
-             i.send(connectionSocket,msg.encode('utf-8'), tamanho, 0) #Não pode começar
-             #i.send(('0').encode('utf-8')) 
-     else: 
-         for i in listaconexoes:
-             msg = '1'
-             tamanho = len(msg)
-             i.send(connectionSocket,msg.encode('utf-8'), tamanho, 0) #Envia autorização para começar
-         flag = True
+     listaconexoes.append(connectionSocket)
 
+
+     ###VERIFICANDO SE HÁ 4 CONEXÕES PARA INICIAR O JOGO 
+     if (len(listaconexoes) < 4):
+         x = '0'
+         mensagem= x.encode('utf-8')
+         listaconexoes[(len(listaconexoes)-1)].send(mensagem)
+     else:
+         x = '1'
+         mensagem = x.encode('utf-8')
+         listaconexoes[(len(listaconexoes)-1)].send(mensagem)
+         flag = True
+         
+     print ('Status da autorização 1 para sim e 0 para não: ',mensagem) #informando status do servidor
+    # print ('Respotas do cliente: ', listaconexoes[(len(listaconexoes))].recv(1024)) #se possível tentar fazer o servidor ouvir o clientes (não está funcionando ainda)
          
      if (flag):
         if (flag1 != True):
             game  = Game() #Iniciar o jogo
             flag1 = True
+            print ('Todos os jogadores online. Servidor pronto para gerenciar o jogo')
+            for i in listaconexoes:
+                i.send(('AGORA VAI !!!').encode('utf-8'))
 
-        if (contRodada%3 == 0): #controla criação de mão a cada 3 rodadas
-            for i in range (0,4):
+            
+'''RICARDO ESSE É O CÓDIGO DE DISTRIBUIR A MÃO
+        if (contRodada%2 == 0): #controla criação de mão a cada 3 rodadas
+            for i in range (0,2):
+            #for i in range (0,4):                
                 h = Hand()
                 game.jogadores[i].add_hand_for_player(h) #criando mão para cada jogador          
         for jogador in game.jogadores:
             for carta in game.deck.get_three_cards():
                 jogador.add_card_to_hand(carta)
-        for i in range(0,4):
+        for i in range(0,2):
+        #for i in range(0,4):            
            listaconexoes[i].send((game.jogadores[i].__str__()).encode('utf-8'))
-    
+'''    
 
 
 connectionSocket.close()
