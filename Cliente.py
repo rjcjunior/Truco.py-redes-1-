@@ -5,9 +5,14 @@ import sys
 #Req1: O cliente deverá receber como entrada um endereço ip (ou nome de host) e um número de porta. 
 
 def  conecta_server(): #criação de função para conectar com servidor
+    #CODIGO DE TESTE 
     serverName = 'localhost'
     serverPort = 12000
 
+    ''' CÓDIGO ORIGINAL
+    serverName = input('Digite o  IP do servidor: ')
+    serverPort = input('Digite a porta: ')'''
+    
     #criacao do socket
     clientSocket = socket(AF_INET, SOCK_STREAM,0)
 
