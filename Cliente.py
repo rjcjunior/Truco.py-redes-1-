@@ -82,10 +82,20 @@ while (fimJogo==False):
         
     for i in range(0,4): #Escolher uma carta da mão
         print('')
-        cartaEscolhida = input("Escolha uma carta (1 a 3), Jogador " + mesaJogadores[i].nomeJogador)
-        mesaJogadores[i].conexao.send(cartaEscolhida.encode('utf-8'))
-    
-
+        print('----MENU------')
+        print('1) Escolher uma carta')
+        print('2) Truco')
+        escolha = int(input("Escolha uma opção"))
+        if (escolha == 1):
+            cartaEscolhida = int(input("Escolha uma carta (1 a 3), Jogador " + mesaJogadores[i].nomeJogador + ":"))
+            visibilidade = int(input("Digite 0 para aberta e 1 para fechada:"))
+            ''' A ídeia é que concatene as 2 opções, por exemblo, se a escolha for
+            a carta 2 e que ela seja fechada, passaria para o servidor o valor 20
+            '''
+            escolhafinal = str(cartaEscolhida)+str(visibilidade) #Concatenar as strings
+            mesaJogadores[i].conexao.send(escolhafinal.encode('utf-8')) #Enviar para o servidor
+        else:
+            mesaJogadores[i].conexao.send(str(escolha).encode('utf-8')) #Se escolher o 2 é truco
 	
 
 

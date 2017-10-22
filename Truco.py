@@ -42,7 +42,7 @@ class Carta:
 
     def set_visibilidade(self, visibilidade): #Função para definir a visibilidade
         self.visibilidade = visibilidade
-        if visibilidade == False:
+        if self.visibilidade == False:
             self.power = 0
         
     def card_power(self): #Função para ter o valor que a carta vale
@@ -152,6 +152,7 @@ class Hand:
             string += str(i) + '\n'
         return string
     __repr__ = __str__
+
 class partida:
 
     def vitory_verify(self, player):
@@ -165,77 +166,76 @@ class partida:
                 break
         return flag
 
-class Rodada:
-    def win(self, vira, cardp1, cardp2, cardp3, cardp4):
-        manilha = self.get_manilha(vira)
-        cartas = [cardp1.power, cardp2.power, cardp3.power, cardp4.power]
-        value = max(cartas)
-        if not(manilha.power in cartas):
-   
-            if cartas.count(value) == 1:
-                if cardp1.power == value:
-                    return 1 #Dupla 1 ganhou 
-                elif cardp2.power == value:
-                    return 2 #Dupla 2 ganhou
-                elif cardp3.power == value:
-                    return 1 #Dupla 1 ganhou
-                else:
-                    return 2 #Dupla 2 ganhou
-            elif cartas.count(value) > 2:
-                return 0 #Empate
+def win(vira, cardp1, cardp2, cardp3, cardp4):
+    manilha = get_manilha(vira)
+    cartas = [cardp1.power, cardp2.power, cardp3.power, cardp4.power]
+    value = max(cartas)
+    if not(manilha.power in cartas):
+
+        if cartas.count(value) == 1:
+            if cardp1.power == value:
+                return 1 #Dupla 1 ganhou 
+            elif cardp2.power == value:
+                return 2 #Dupla 2 ganhou
+            elif cardp3.power == value:
+                return 1 #Dupla 1 ganhou
             else:
-                if (cardp1.power == cardp2.power == value) or \
-                   (cardp1.power == cardp4.power == value) or \
-                   (cardp2.power == cardp3.power == value) or \
-                   (cardp3.power == cardp4.power == value):
-                        return 0 #Empate    
-                elif cardp1.power == cardp3.power == value:
-                    return 1 #Dupla 1 ganhou
-                else:
-                    return 2 #Dupla 2 ganhou
+                return 2 #Dupla 2 ganhou
+        elif cartas.count(value) > 2:
+            return 0 #Empate
         else:
-            if cartas.count(manilha.power) == 1:
-                if cardp1.power == manilha.power:
-                    return 1 #Dupla 1 ganhou 
-                elif cardp2.power == manilha.power:
-                    return 2 #Dupla 2 ganhou
-                elif cardp3.power == manilha.power:
-                    return 1 #Dupla 1 ganhou
-                else:
-                    return 2 #Dupla 2 ganhou
+            if (cardp1.power == cardp2.power == value) or \
+               (cardp1.power == cardp4.power == value) or \
+               (cardp2.power == cardp3.power == value) or \
+               (cardp3.power == cardp4.power == value):
+                    return 0 #Empate    
+            elif cardp1.power == cardp3.power == value:
+                return 1 #Dupla 1 ganhou
             else:
-                if (cardp1.power == cardp2.power == manilha.power):
-                    if cardp1.naipe > cardp2.naipe:
-                        return 1 #Dupla 1 ganhou
-                    else:
-                        return 2 #Dupla 2 ganhou
-                if (cardp1.power == cardp4.power == manilha.power):
-                    if cardp1.naipe > cardp4.naipe:
-                        return 1 #Dupla 1 ganhou
-                    else:
-                        return 2 #Dupla 2 ganhou
-                if (cardp2.power == cardp3.power == manilha.power):
-                    if cardp2.naipe > cardp3.naipe:
-                        return 1 #Dupla 1 ganhou
-                    else:
-                        return 2 #Dupla 2 ganhou
-                if (cardp3.power == cardp4.power == manilha.power):
-                    if cardp3.naipe > cardp4.naipe:
-                        return 1 #Dupla 1 ganhou
-                    else:
-                        return 2 #Dupla 2 ganhou
-                elif cardp1.power == cardp3.power == manilha.power:
+                return 2 #Dupla 2 ganhou
+    else:
+        if cartas.count(manilha.power) == 1:
+            if cardp1.power == manilha.power:
+                return 1 #Dupla 1 ganhou 
+            elif cardp2.power == manilha.power:
+                return 2 #Dupla 2 ganhou
+            elif cardp3.power == manilha.power:
+                return 1 #Dupla 1 ganhou
+            else:
+                return 2 #Dupla 2 ganhou
+        else:
+            if (cardp1.power == cardp2.power == manilha.power):
+                if cardp1.naipe > cardp2.naipe:
                     return 1 #Dupla 1 ganhou
                 else:
                     return 2 #Dupla 2 ganhou
-                
+            if (cardp1.power == cardp4.power == manilha.power):
+                if cardp1.naipe > cardp4.naipe:
+                    return 1 #Dupla 1 ganhou
+                else:
+                    return 2 #Dupla 2 ganhou
+            if (cardp2.power == cardp3.power == manilha.power):
+                if cardp2.naipe > cardp3.naipe:
+                    return 1 #Dupla 1 ganhou
+                else:
+                    return 2 #Dupla 2 ganhou
+            if (cardp3.power == cardp4.power == manilha.power):
+                if cardp3.naipe > cardp4.naipe:
+                    return 1 #Dupla 1 ganhou
+                else:
+                    return 2 #Dupla 2 ganhou
+            elif cardp1.power == cardp3.power == manilha.power:
+                return 1 #Dupla 1 ganhou
+            else:
+                return 2 #Dupla 2 ganhou
             
-    def get_manilha(self, vira):   #Função para retornar a manilha     
-        manilha = vira.valor+1
-        if manilha > 13:
-            manilha = manilha - 13
-        manilha = Carta(manilha, 1)
-        return manilha
+        
+def get_manilha(vira):   #Função para retornar a manilha     
+    manilha = vira.valor+1
+    if manilha > 13:
+        manilha = manilha - 13
+    manilha = Carta(manilha, 1)
+    return manilha
     
 
 
@@ -315,8 +315,25 @@ while 1:
             vira = game.deck.get_vira() #Definir o vira
             for i in range(0,4): #Receber confirmação de envio para o vira
                 listaconexoes[i].send((vira.__str__()).encode('utf-8'))
-            for i in range(0,4): #imprimir escolha de carta do jogador
-                print(listaconexoes[i].recv(1024))
-
-        
-
+            escolhasRodada = [] #Uma variavel para armazenar as escolhas da rodada
+            flag_escolha = False #Saber se ele escolheu truco ou não
+            for i in range(0,4): #Coletar cartas
+                escolha = listaconexoes[i].recv(1024)
+                escolha = escolha.decode("utf-8") 
+                if escolha != '2':
+                    cartaescolhida = int(escolha[0]) #Pegar a posicao escolhida
+                    cartaescolhida = game.jogadores[i].remove_card_to_hand(cartaescolhida)#Pegar a carta na posição escolhida
+                    visibilidadeEscolhida = int(escolha[1])
+                    if visibilidadeEscolhida == 1:
+                        cartaescolhida.visibilidade = False
+                        cartaescolhida.power = 0 #Falando q o poder dela é 0 
+                    escolhasRodada.append(cartaescolhida)
+                    print (cartaescolhida)
+            if flag_escolha: #Não escolheu truco          
+                ganhador = win(vira, escolhasRodada[0], escolhasRodada[1], escolhasRodada[2],escolhasRodada[3])
+                '''Sò um lembrete para eu não esquecer:
+                    Distribuir pontos p dupla, verificar se alguem ganhou o jogo, incrementar rodada nas mãos,
+                    tratar escolhas( Não pode escolher opcoes não permitidas)
+                    Enviar as cartas escolhidas para os jogadores
+                    Enviar a dupla ganhadora para os jogadores
+                '''
