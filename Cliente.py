@@ -1,18 +1,13 @@
 from socket import *
 import sys
-
+import time
 
 #Req1: O cliente deverá receber como entrada um endereço ip (ou nome de host) e um número de porta. 
 
 def  conecta_server(): #criação de função para conectar com servidor
-    #CODIGO DE TESTE 
     serverName = 'localhost'
     serverPort = 12000
 
-    ''' CÓDIGO ORIGINAL
-    serverName = input('Digite o  IP do servidor: ')
-    serverPort = input('Digite a porta: ')'''
-    
     #criacao do socket
     clientSocket = socket(AF_INET, SOCK_STREAM,0)
 
@@ -73,9 +68,18 @@ while (fimJogo==False):
     cont = 0
     for i in mesaJogadores: #For para exibir as cartas
         data = i.conexao.recv(1024) #cliente escuta servidor
-        print ('mensagem com leitura correta de buffer: ',ler_msg(i.bytesRecebidos,data)) #exibe última mensagem
+        print ('Sua mão é',ler_msg(i.bytesRecebidos,data)) #exibe última mensagem
         mesaJogadores[cont].bytesRecebidos += len(data)
         cont +=1
+        
+    cont = 0
+    time.sleep(1) #Delay para receber o VIra  
+    for i in mesaJogadores: #For para exibir o vira
+        data = i.conexao.recv(1024) #cliente escuta servidor
+        print('O Vira é ', data) # !!!!! Não sei pq agora não ta acumulando, mas se usar a função ele buga
+        mesaJogadores[cont].bytesRecebidos += len(data)
+        cont +=1
+        
     for i in range(0,4): #Escolher uma carta da mão
         print('')
         cartaEscolhida = input("Escolha uma carta (1 a 3), Jogador " + mesaJogadores[i].nomeJogador)

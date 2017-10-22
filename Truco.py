@@ -1,7 +1,8 @@
-# -- coding: cp1252 --
+# -*- coding: cp1252 -*-
 import random
 from socket import *
 from sys import *
+import time
 
 
 class Carta:
@@ -310,12 +311,12 @@ while 1:
             for i in range(0,4):#Enviar mão para o jogador            
                listaconexoes[i].send((game.jogadores[i].__str__()).encode('utf-8'))
             print('------------')
+            time.sleep(1) #Delay para enviar o VIra  
+            vira = game.deck.get_vira() #Definir o vira
+            for i in range(0,4): #Receber confirmação de envio para o vira
+                listaconexoes[i].send((vira.__str__()).encode('utf-8'))
             for i in range(0,4): #imprimir escolha de carta do jogador
                 print(listaconexoes[i].recv(1024))
-            #Fazer o vencendor da rodada
-            #Fazer menu de truco ou retrucar
-            
-
 
         
 
