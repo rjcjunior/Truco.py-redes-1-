@@ -369,10 +369,32 @@ while 1:
                         conexao.shutdown()
                         conexao.close()
                     break
-           # else: #Se escolher o truco
+'''            else: #Se escolher o truco
                 # Enviar Chamada de truco para os jogadores
-                # Ver se a dupla adversaria aceita ou recusa o truco
+                for i in range (0,4):
+                    if  (i!= position_player) and (i != position_player + 2 or i != position_player - 2):
+                        listaconexoes[i].send("truco".encode('utf-8')) #Enviar mensagem avisando que alguem solicitou truco
+                    if (i == position_player + 2 or i == position_player - 2):
+                        listaconexoes[i].send("truco1".encode('utf-8')) #Enviar mensagem avisando que o parceiro pediu truco
+                aceitou = False
+                fugiu = False
+                retruco = False
+                for i in range(0,4)
+                    if  (i!= position_player) and (i != position_player + 2 or i != position_player - 2): 
+                        resposta_truco = listaconexoes[i].recv(1024)
+                    if resposta_truco = "aceitar":
+                        break #Pegou a primeira resposta e saiu do loop
+                        #A especificação não diz o q acontece qnd um cara da dupla aceita o truco e o outro tenta fugir, então estou considenrando que a primeira resposta é a q vale
+                    elif resposta_truco = "fugir":
+                        break #Pegou a primeira resposta e saiu do loop
+                    elif resposta_truco = "proximo_decide": #Como estou considerando a primeira resposta como a valida, inseri algo para caso o primeiro não queira decidir, deixando a resposta para o proximo
+                        if i==3:
+                            resposta_truco ==" fugir" # Se o cara, mesmo sendo o ultimo  a escolher, não quiser tomar a decisão. Então consideramos q a dupla fugiu do truco
+                    else: #Retrucou
+                        break # retrucou
+
                 # caso aceite, 3x os pontos da mão
                 # caso fuja, distribuir pontos para a dupla que pediu o truco
                 # Tratar retruco, se pedir
                 
+'''
