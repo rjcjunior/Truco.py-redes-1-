@@ -140,8 +140,8 @@ class Hand:
     
     def __init__(self):
         self.hand = [] #Lista de cartas na mão
-        self.point = 1 #Pontos da mão
-        self.rodada = 1 #Flag para contar o numero de rodadas
+        self.point = 0 #Pontos da mão
+        self.rodada = 0 #Flag para contar o numero de rodadas
         
     def add_card(self, carta): #Função para adicionar a carta na mão
         self.hand.append(carta)
@@ -153,18 +153,17 @@ class Hand:
         return string
     __repr__ = __str__
 
-class partida:
 
-    def vitory_verify(self, player):
-        flag = False
-        for i in player.hands: #Percorrer as mãos dos jogadores
-            cont = 0
-            for j in i: #Percorrer uma mão em especifica
-                cont+= i.point
-            if cont>=12:
-                flag = True
-                break
-        return flag
+def vitory_verify(player):
+    flag = False
+    for i in player.hands: #Percorrer as mãos dos jogadores
+        cont = 0
+        for j in i: #Percorrer uma mão em especifica
+            cont+= i.point
+        if cont>=12:
+            flag = True
+            break
+    return flag
 
 def win(vira, cardp1, cardp2, cardp3, cardp4):
     manilha = get_manilha(vira)
@@ -305,7 +304,6 @@ while 1:
                     h = Hand()
                     game.jogadores[i].add_hand_for_player(h) #criando mão para cada jogador          
             for jogador in game.jogadores:
-            
                 for carta in game.deck.get_three_cards():
                     jogador.add_card_to_hand(carta)
             for i in range(0,4):#Enviar mão para o jogador            
@@ -319,6 +317,7 @@ while 1:
             flag_escolha = False #Saber se ele escolheu truco ou não
             for i in range(0,4): #Coletar cartas
                 escolha = listaconexoes[i].recv(1024)
+                #Dps tem de fazer o envio da carta para os demais jogadores !!!!
                 escolha = escolha.decode("utf-8") 
                 if escolha != '2':
                     cartaescolhida = int(escolha[0]) #Pegar a posicao escolhida
@@ -328,11 +327,36 @@ while 1:
                         cartaescolhida.visibilidade = False
                         cartaescolhida.power = 0 #Falando q o poder dela é 0 
                     escolhasRodada.append(cartaescolhida)
-                    print (cartaescolhida)
-            if flag_escolha: #Não escolheu truco          
+                    
+            if flag_escolha: #Não escolheu truco          !!!Tem de fazer se escolher truco
                 ganhador = win(vira, escolhasRodada[0], escolhasRodada[1], escolhasRodada[2],escolhasRodada[3])
+                if ganhador == 1: #Dupla 1 ganhou
+                    game.jogadores[0].hand.point += 1 # Os jogadores 1 e 3 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
+                    game.jogadores[2].hand.point += 1                
+                elif ganhador ==2: #Dupla 2 ganhou
+                    game.jogadores[1].hand.point += 1 # Os jogadores 2 e 4 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
+                    game.jogadores[3].hand.point += 1                                   
+                else: #Empate
+                    for i in range(0,4):
+                        game.jogadores[i].hand.point += 1
+                for i in range(0,4): # Incrementar o numero de rodadas na mão
+                    game.jogadores[i].hand.rodadas += 1
+                contRodada += 1
+                if vitory_verify(game.jogadores[0]) or vitory_verify(game.jogadores[2]):
+                    #Enviar algo avisando que a dupla 1 ganhou o truco !!!!
+                    for conexao in listaconexoes: #Fechar conexao
+                        conexão.shutdown()
+                        conexão.close()
+                    break
+                if vitory_verify(game.jogadores[1]) or vitory_verify(game.jogadores[3]):
+                    #Enviar algo avisando que a dupla 2 ganhou o truco !!!!
+                    for conexao in listaconexoes: #Fechar conexao
+                        conexão.shutdown()
+                        conexão.close()
+                    break
+                
+
                 '''Sò um lembrete para eu não esquecer:
-                    Distribuir pontos p dupla, verificar se alguem ganhou o jogo, incrementar rodada nas mãos,
                     tratar escolhas( Não pode escolher opcoes não permitidas)
                     Enviar as cartas escolhidas para os jogadores
                     Enviar a dupla ganhadora para os jogadores
