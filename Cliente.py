@@ -5,8 +5,8 @@ import time
 #Req1: O cliente deverá receber como entrada um endereço ip (ou nome de host) e um número de porta. 
 
 def  conecta_server(): #criação de função para conectar com servidor
-    serverName = 'localhost'
-    serverPort = 12000
+    serverName = input("Entre com o endereço do servidor") or "localhost"
+    serverPort = int(input("Entre com a porta do servidor"))
 
     #criacao do socket
     clientSocket = socket(AF_INET, SOCK_STREAM,0)
@@ -113,4 +113,4 @@ while (fimJogo==False):
         mesaJogadores[cont].bytesRecebidos += len(data)
         ++cont
     print('---------------')
-    time.sleep(1) #Delay para receber o VIra  
+    time.sleep(1) #Delay 

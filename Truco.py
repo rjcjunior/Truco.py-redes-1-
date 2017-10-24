@@ -257,17 +257,17 @@ def ler_msg(bytesRecebidos,data):
     return msgEsperada
                 
     
-serverPort = 12000
-serverSocket = socket(AF_INET, SOCK_STREAM)
-serverSocket.bind(('', serverPort))
-serverSocket.listen(4)
+serverPort = 12000 #Porta para o socket
+serverSocket = socket(AF_INET, SOCK_STREAM) #Criação do socket tcp
+serverSocket.bind(('', serverPort)) #Atribuindo o socket a porta, e aceitando conexao em qualquer instancia nesse socket
+serverSocket.listen(4) # Numero maximo d 4 conexoes simultaneas
 
 
 listaconexoes = []
 flag = False #Flag para verificar se pode não pode começar
 flag1 = False #Flag para iniciar a variavel de game
 contRodada = 0 #contador para verificar número de rodas
-
+conthand = 0
 #msg = 'variavel pra troca de mensagens' #variavel para controlar troca de mensagens 
 
 while 1:         
@@ -298,6 +298,7 @@ while 1:
             print ('Todos os jogadores online. Servidor pronto para gerenciar o jogo')
         while True: #Um loop para repetir todo o jogo, evitando fazer a nova conexão e criar um jogo novo
             if (contRodada%3 == 0): #controla criação de mão a cada 3 rodadas
+                conthand+=1
                 for i in range (0,4):                
                     h = Hand()
                     game.jogadores[i].add_hand_for_player(h) #criando mão para cada jogador          
@@ -340,26 +341,26 @@ while 1:
             time.sleep(1) #Delay para enviar o as cartas  
             if not flag_escolha: #Não escolheu truco          
                 ganhador = win(vira, escolhasRodada[0], escolhasRodada[1], escolhasRodada[2],escolhasRodada[3])
-                if ganhador == 1: #Dupla 1 ganhou
-                    game.jogadores[0].hands[contRodada%3].point += 1 # Os jogadores 1 e 3 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
-                    game.jogadores[2].hands[contRodada%3].point += 1
+                if ganhador == 1: #Dupla 1 ganhou                    
+                    game.jogadores[0].hands[conthand-1].point += 1 # Os jogadores 1 e 3 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
+                    game.jogadores[2].hands[conthand-1].point += 1
                     print("Dupla 1 ganhou essa rodada")
                     for i in range(0,4):
                           listaconexoes[i].send("A dupla 1 ganhou essa rodada".encode('utf-8'))
                 elif ganhador ==2: #Dupla 2 ganhou
-                    game.jogadores[1].hands[contRodada%3].point += 1 # Os jogadores 2 e 4 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
-                    game.jogadores[3].hands[contRodada%3].point += 1                                   
+                    game.jogadores[1].hands[(conthand-1)].point += 1 # Os jogadores 2 e 4 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
+                    game.jogadores[3].hands[(conthand-1)].point += 1                                   
                     print("Dupla 2 ganhou essa rodada")
                     for i in range(0,4):
                           listaconexoes[i].send("A dupla 2 ganhou essa rodada".encode('utf-8'))
                 else: #Empate
                     print("Rolou um empate")
                     for i in range(0,4):
-                        game.jogadores[i].hands[contRodada%3].point += 1 
+                        game.jogadores[i].hands[(conthand-1)].point += 1 
                     for i in range(0,4):
                           listaconexoes[i].send("Rolou um empate".encode('utf-8'))
                 for i in range(0,4): # Incrementar o numero de rodadas na mão
-                    game.jogadores[i].hands[contRodada%3].rodada += 1
+                    game.jogadores[i].hands[(conthand-1)].rodada += 1
                 contRodada += 1
                 time.sleep(1) #Delay   
                 if vitory_verify(game.jogadores[0]) or vitory_verify(game.jogadores[2]):
@@ -415,7 +416,7 @@ while 1:
                         if i >= position_player: #Valer só para quem não jogou as cartas ainda
                             cartaescolhida = int(escolha[0]) #Pegar a posicao escolhida
                             cartaescolhida = game.jogadores[i].remove_card_to_hand(cartaescolhida)#Pegar a carta na posição escolhida
-                        for j in range(0,4): #Envio de cartas para todos os outros jogadores AINDA NÃO TESTEI ISSO!!!!!!!
+                        for j in range(0,4): #Envio de cartas para todos os outros jogadores 
                             if (i != j): #Enviar para todos menos para o jogador atual
                                 msg_envio = "O Jogador " + str(i) + " jogou a carta " + cartaescolhida.__str__() 
                                 listaconexoes[i].send((msg_envio).encode('utf-8'))
@@ -426,22 +427,22 @@ while 1:
                         escolhasRodada.append(cartaescolhida)
                     ganhador = win(vira, escolhasRodada[0], escolhasRodada[1], escolhasRodada[2],escolhasRodada[3])
                     if ganhador == 1: #Dupla 1 ganhou
-                        game.jogadores[0].hands[contRodada%3].point += point_truco # Os jogadores 1 e 3 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
-                        game.jogadores[2].hands[contRodada%3].point += point_truco
+                        game.jogadores[0].hands[(conthand-1)].point += point_truco # Os jogadores 1 e 3 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
+                        game.jogadores[2].hands[(conthand-1)].point += point_truco
                         for i in range(0,4):
                               listaconexoes[i].send("A dupla 1 ganhou essa rodada".encode('utf-8'))
                     elif ganhador ==2: #Dupla 2 ganhou
-                        game.jogadores[1].hands[contRodada%3].point += point_truco # Os jogadores 2 e 4 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
-                        game.jogadores[3].hands[contRodada%3].point += point_truco                                   
+                        game.jogadores[1].hands[(conthand-1)].point += point_truco # Os jogadores 2 e 4 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
+                        game.jogadores[3].hands[(conthand-1)].point += point_truco                                   
                         for i in range(0,4):
                               listaconexoes[i].send("A dupla 2 ganhou essa rodada".encode('utf-8'))
                     else: #Empate
                         for i in range(0,4):
-                            game.jogadores[i].hands[contRodada%3].point += 1 
+                            game.jogadores[i].hands[(conthand-1)].point += 1 
                         for i in range(0,4):
                               listaconexoes[i].send("Rolou um empate".encode('utf-8'))
                     for i in range(0,4): # Incrementar o numero de rodadas na mão
-                        game.jogadores[i].hands[contRodada%3].rodada += 1
+                        game.jogadores[i].hands[(conthand-1)].rodada += 1
                     contRodada += 1 #incrementar contador de rodadas
                     if vitory_verify(game.jogadores[0]) or vitory_verify(game.jogadores[2]):
 
@@ -457,8 +458,4 @@ while 1:
                             conexao.close()
                         break
                             
-                
-                # caso aceite, 3x os pontos da mão
-                # caso fuja, distribuir pontos para a dupla que pediu o truco
-                # Tratar retruco, se pedir
  
