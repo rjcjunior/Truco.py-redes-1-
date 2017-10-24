@@ -1,4 +1,3 @@
-# -*- coding: cp1252 -*-
 import random
 from socket import *
 from sys import *

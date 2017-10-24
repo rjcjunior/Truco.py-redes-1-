@@ -68,7 +68,7 @@ while (fimJogo==False):
     cont = 0
     for i in mesaJogadores: #For para exibir as cartas
         data = i.conexao.recv(1024) #cliente escuta servidor
-        print ('Sua mão é',ler_msg(i.bytesRecebidos,data)) #exibe última mensagem
+        print (mesaJogadores[cont].nomeJogador, ',sua mão é ',ler_msg(i.bytesRecebidos,data), '\n') #exibe última mensagem
         mesaJogadores[cont].bytesRecebidos += len(data)
         cont +=1
         
@@ -76,18 +76,20 @@ while (fimJogo==False):
     time.sleep(1) #Delay para receber o VIra  
     for i in mesaJogadores: #For para exibir o vira
         data = i.conexao.recv(1024) #cliente escuta servidor
-        print('O Vira é ', data) # !!!!! Não sei pq agora não ta acumulando, mas se usar a função ele buga
+        print('\n',mesaJogadores[cont].nomeJogador,',o Vira é ', data) # !!!!! Não sei pq agora não ta acumulando, mas se usar a função ele buga
         mesaJogadores[cont].bytesRecebidos += len(data)
         cont +=1
+    
         
     for i in range(0,4): #Escolher uma carta da mão
         print('')
         print('----MENU------')
+        print(mesaJogadores[i].nomeJogador,', escolha uma opção abaixo:')
         print('1) Escolher uma carta')
         print('2) Truco')
-        escolha = int(input("Escolha uma opção"))
+        escolha = int(input("Informe sua opção: "))
         if (escolha == 1):
-            cartaEscolhida = int(input("Escolha uma carta (1 a 3), Jogador " + mesaJogadores[i].nomeJogador + ":"))
+            cartaEscolhida = int(input("Escolha uma carta (1 a 3): "))
             visibilidade = int(input("Digite 0 para aberta e 1 para fechada:"))
             ''' A ídeia é que concatene as 2 opções, por exemblo, se a escolha for
             a carta 2 e que ela seja fechada, passaria para o servidor o valor 20
