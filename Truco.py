@@ -369,6 +369,7 @@ while 1:
                         conexao.close()
                     break
 '''            else: #Se escolher o truco
+                point_truco = 1 #Variavel para controlar os pontos do truco
                 # Enviar Chamada de truco para os jogadores
                 for i in range (0,4):
                     if  (i!= position_player) and (i != position_player + 2 or i != position_player - 2):
@@ -378,22 +379,77 @@ while 1:
                 aceitou = False
                 fugiu = False
                 retruco = False
-                for i in range(0,4)
+                for i in range(0,4):
                     if  (i!= position_player) and (i != position_player + 2 or i != position_player - 2): 
                         resposta_truco = listaconexoes[i].recv(1024)
-                    if resposta_truco = "aceitar":
+                    if resposta_truco == "aceitar":
+                        aceitou = True
                         break #Pegou a primeira resposta e saiu do loop
                         #A especificação não diz o q acontece qnd um cara da dupla aceita o truco e o outro tenta fugir, então estou considenrando que a primeira resposta é a q vale
-                    elif resposta_truco = "fugir":
+                    elif resposta_truco == "fugir":
+                        fugiu = True
                         break #Pegou a primeira resposta e saiu do loop
-                    elif resposta_truco = "proximo_decide": #Como estou considerando a primeira resposta como a valida, inseri algo para caso o primeiro não queira decidir, deixando a resposta para o proximo
+                    elif resposta_truco == "proximo_decide": #Como estou considerando a primeira resposta como a valida, inseri algo para caso o primeiro não queira decidir, deixando a resposta para o proximo
                         if i==3:
-                            resposta_truco ==" fugir" # Se o cara, mesmo sendo o ultimo  a escolher, não quiser tomar a decisão. Então consideramos q a dupla fugiu do truco
+                            resposta_truco = "fugir"
+                            fugiu = True
+                            # Se o cara, mesmo sendo o ultimo  a escolher, não quiser tomar a decisão. Então consideramos q a dupla fugiu do truco
                     else: #Retrucou
+                        retruco = True
                         break # retrucou
+                if aceitou:
+                    if point_truco == 1: 
+                        point_truco = 3
+                    else:
+                        point_truco += 3
+                    for i in range(0,4): #pecorrer pedindo as cartas de quem falta
+                        if i >= position_player: #Valer só para quem não jogou as cartas ainda
+                            cartaescolhida = int(escolha[0]) #Pegar a posicao escolhida
+                            cartaescolhida = game.jogadores[i].remove_card_to_hand(cartaescolhida)#Pegar a carta na posição escolhida
+                        for j in range(0,4): #Envio de cartas para todos os outros jogadores AINDA NÃO TESTEI ISSO!!!!!!!
+                            if (i != j): #Enviar para todos menos para o jogador atual
+                                msg_envio = "O Jogador " + str(i) + " jogou a carta " + cartaescolhida.__str__() 
+                                listaconexoes[i].send((msg_envio).encode('utf-8'))
+                        visibilidadeEscolhida = int(escolha[1])
+                        if visibilidadeEscolhida == 1:
+                            cartaescolhida.visibilidade = False
+                            cartaescolhida.power = 0 #Falando q o poder dela é 0 
+                        escolhasRodada.append(cartaescolhida)
+                    ganhador = win(vira, escolhasRodada[0], escolhasRodada[1], escolhasRodada[2],escolhasRodada[3])
+                    if ganhador == 1: #Dupla 1 ganhou
+                        game.jogadores[0].hand.point += point_truco # Os jogadores 1 e 3 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
+                        game.jogadores[2].hand.point += point_truco
+                        for i in range(0,4):
+                              listaconexoes[i].send("A dupla 1 ganhou essa rodada".encode('utf-8'))
+                    elif ganhador ==2: #Dupla 2 ganhou
+                        game.jogadores[1].hand.point += point_truco # Os jogadores 2 e 4 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
+                        game.jogadores[3].hand.point += point_truco                                   
+                        for i in range(0,4):
+                              listaconexoes[i].send("A dupla 2 ganhou essa rodada".encode('utf-8'))
+                    else: #Empate
+                        for i in range(0,4):
+                            game.jogadores[i].hand.point += 1 
+                        for i in range(0,4):
+                              listaconexoes[i].send("Rolou um empate".encode('utf-8'))
+                    for i in range(0,4): # Incrementar o numero de rodadas na mão
+                        game.jogadores[i].hand.rodadas += 1
+                    contRodada += 1 #incrementar contador de rodadas
+                    if vitory_verify(game.jogadores[0]) or vitory_verify(game.jogadores[2]):
 
+                        for conexao in listaconexoes: #Fechar conexao
+                            conexao.send("A dupla 1 ganhou o truco".encode('utf-8'))
+                            conexao.shutdown()
+                            conexao.close()
+                        break
+                    if vitory_verify(game.jogadores[1]) or vitory_verify(game.jogadores[3]):
+                        for conexao in listaconexoes: #Fechar conexao
+                            conexao.send("A dupla 2 ganhou o truco".encode('utf-8'))
+                            conexao.shutdown()
+                            conexao.close()
+                        break
+                            
+                
                 # caso aceite, 3x os pontos da mão
                 # caso fuja, distribuir pontos para a dupla que pediu o truco
                 # Tratar retruco, se pedir
-                
-'''
+ '''           
