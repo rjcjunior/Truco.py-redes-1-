@@ -321,10 +321,6 @@ while 1:
                 if escolha != '2':
                     cartaescolhida = int(escolha[0]) #Pegar a posicao escolhida
                     cartaescolhida = game.jogadores[i].remove_card_to_hand(cartaescolhida)#Pegar a carta na posição escolhida
-                    for j in range(0,4): #Envio de cartas para todos os outros jogadores AINDA NÃO TESTEI ISSO!!!!!!!
-                        if (i != j): #Enviar para todos menos para o jogador atual
-                            msg_envio = "O Jogador " + str(i) + " jogou a carta " + cartaescolhida.__str__() 
-                            listaconexoes[i].send((msg_envio).encode('utf-8'))
                     visibilidadeEscolhida = int(escolha[1])
                     if visibilidadeEscolhida == 1:
                         cartaescolhida.visibilidade = False
@@ -334,20 +330,32 @@ while 1:
                     flag_escolha = True
                     break #Sai do for
                 position_player +=1
-                    
-            if flag_escolha: #Não escolheu truco          !!!Tem de fazer se escolher truco
+            cont = 0
+            cont = 0
+            for j in escolhasRodada: #Envio de cartas para todos os outros jogadores 
+                for i in range(0,4):
+                    if cont != i:
+                            msg_envio = " O Jogador " + str(cont + 1) + " jogou a carta " + j.__str__() + '\n' 
+                            listaconexoes[i].send((msg_envio).encode('utf-8'))
+                cont += 1
+            time.sleep(1) #Delay para enviar o as cartas  
+'''                    
+            if flag_escolha: #Não escolheu truco          !!!
                 ganhador = win(vira, escolhasRodada[0], escolhasRodada[1], escolhasRodada[2],escolhasRodada[3])
                 if ganhador == 1: #Dupla 1 ganhou
                     game.jogadores[0].hand.point += 1 # Os jogadores 1 e 3 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
                     game.jogadores[2].hand.point += 1
+                    print("Dupla 1 ganhou essa rodada")
                     for i in range(0,4):
                           listaconexoes[i].send("A dupla 1 ganhou essa rodada".encode('utf-8'))
                 elif ganhador ==2: #Dupla 2 ganhou
                     game.jogadores[1].hand.point += 1 # Os jogadores 2 e 4 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
                     game.jogadores[3].hand.point += 1                                   
+                    print("Dupla 2 ganhou essa rodada")
                     for i in range(0,4):
                           listaconexoes[i].send("A dupla 2 ganhou essa rodada".encode('utf-8'))
                 else: #Empate
+                    print("Rolou um empate")
                     for i in range(0,4):
                         game.jogadores[i].hand.point += 1 
                     for i in range(0,4):
@@ -356,6 +364,7 @@ while 1:
                     game.jogadores[i].hand.rodadas += 1
                 contRodada += 1
                 if vitory_verify(game.jogadores[0]) or vitory_verify(game.jogadores[2]):
+                    print("Dupla 1 ganhou o truco")
 
                     for conexao in listaconexoes: #Fechar conexao
                         conexao.send("A dupla 1 ganhou o truco".encode('utf-8'))
@@ -363,12 +372,13 @@ while 1:
                         conexao.close()
                     break
                 if vitory_verify(game.jogadores[1]) or vitory_verify(game.jogadores[3]):
+                    print("Dupla 2 ganhou o truco")
                     for conexao in listaconexoes: #Fechar conexao
                         conexao.send("A dupla 2 ganhou o truco".encode('utf-8'))
                         conexao.shutdown()
                         conexao.close()
                     break
-'''            else: #Se escolher o truco
+            else: #Se escolher o truco
                 point_truco = 1 #Variavel para controlar os pontos do truco
                 # Enviar Chamada de truco para os jogadores
                 for i in range (0,4):

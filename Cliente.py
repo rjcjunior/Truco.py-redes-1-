@@ -48,7 +48,7 @@ for i in range(0,4):
     nome = input('Digite seu nome: ')
     conexao = conecta_server() #realiza conexão com servidor 
     j = Jogador(nome, conexao, 0) #cria jogador
-    autorizacao = conexao.recv(1024) #autorização do server se o jogo deve começar ou não
+    autorizacao = conexao.recv(4096) #autorização do server se o jogo deve começar ou não
     j.bytesRecebidos = j.bytesRecebidos+len(autorizacao) #armazenando a quantidade de bytes recebidos
     mesaJogadores.append(j) #mesa recebe jogadores
 
@@ -67,15 +67,15 @@ while (fimJogo==False):
     
     cont = 0
     for i in mesaJogadores: #For para exibir as cartas
-        data = i.conexao.recv(1024) #cliente escuta servidor
-        print (mesaJogadores[cont].nomeJogador, ',sua mão é ',ler_msg(i.bytesRecebidos,data), '\n') #exibe última mensagem
+        data = i.conexao.recv(4096) #cliente escuta servidor
+        print (mesaJogadores[cont].nomeJogador, ',sua mão é ', ler_msg(i.bytesRecebidos,data) , '\n') #exibe última mensagem
         mesaJogadores[cont].bytesRecebidos += len(data)
         cont +=1
         
     cont = 0
     time.sleep(1) #Delay para receber o VIra  
     for i in mesaJogadores: #For para exibir o vira
-        data = i.conexao.recv(1024) #cliente escuta servidor
+        data = i.conexao.recv(4096) #cliente escuta servidor
         print('\n',mesaJogadores[cont].nomeJogador,',o Vira é ', data) # !!!!! Não sei pq agora não ta acumulando, mas se usar a função ele buga
         mesaJogadores[cont].bytesRecebidos += len(data)
         cont +=1
@@ -98,11 +98,11 @@ while (fimJogo==False):
             mesaJogadores[i].conexao.send(escolhafinal.encode('utf-8')) #Enviar para o servidor
         else:
             mesaJogadores[i].conexao.send(str(escolha).encode('utf-8')) #Se escolher o 2 é truco
-	
-
-
-	
-
-
-
-
+    cont=0
+    for i in mesaJogadores: #Mostar as cartas que foram escolhidas
+        data = i.conexao.recv(4096) #cliente escuta servidor
+        print(mesaJogadores[cont].nomeJogador, data, '\n') # !!!!! Não sei pq agora não ta acumulando, mas se usar a função ele buga
+        print('')
+        mesaJogadores[cont].bytesRecebidos += len(data)
+        cont+=1
+    cont = 0 
