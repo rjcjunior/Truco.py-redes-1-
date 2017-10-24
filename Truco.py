@@ -17,7 +17,7 @@ class Carta:
         naipe = self.naipe
         if valor <=13  and valor>0:
             if valor == 1:
-                valor = 'Ás'
+                valor = 'As'
             elif valor == 11:
                 valor = 'Dama'
             elif valor == 12:
@@ -155,10 +155,9 @@ class Hand:
 
 def vitory_verify(player):
     flag = False
+    cont = 0
     for i in player.hands: #Percorrer as mãos dos jogadores
-        cont = 0
-        for j in i: #Percorrer uma mão em especifica
-            cont+= i.point
+        cont+= i.point
         if cont>=12:
             flag = True
             break
@@ -302,9 +301,9 @@ while 1:
                 for i in range (0,4):                
                     h = Hand()
                     game.jogadores[i].add_hand_for_player(h) #criando mão para cada jogador          
-            for jogador in game.jogadores:
-                for carta in game.deck.get_three_cards():
-                    jogador.add_card_to_hand(carta)
+                for jogador in game.jogadores:
+                    for carta in game.deck.get_three_cards():
+                        jogador.add_card_to_hand(carta)
             for i in range(0,4):#Enviar mão para o jogador            
                listaconexoes[i].send((game.jogadores[i].__str__()).encode('utf-8'))
             print('------------')
@@ -339,30 +338,30 @@ while 1:
                             listaconexoes[i].send((msg_envio).encode('utf-8'))
                 cont += 1
             time.sleep(1) #Delay para enviar o as cartas  
-'''                    
-            if flag_escolha: #Não escolheu truco          !!!
+            if not flag_escolha: #Não escolheu truco          
                 ganhador = win(vira, escolhasRodada[0], escolhasRodada[1], escolhasRodada[2],escolhasRodada[3])
                 if ganhador == 1: #Dupla 1 ganhou
-                    game.jogadores[0].hand.point += 1 # Os jogadores 1 e 3 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
-                    game.jogadores[2].hand.point += 1
+                    game.jogadores[0].hands[contRodada%3].point += 1 # Os jogadores 1 e 3 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
+                    game.jogadores[2].hands[contRodada%3].point += 1
                     print("Dupla 1 ganhou essa rodada")
                     for i in range(0,4):
                           listaconexoes[i].send("A dupla 1 ganhou essa rodada".encode('utf-8'))
                 elif ganhador ==2: #Dupla 2 ganhou
-                    game.jogadores[1].hand.point += 1 # Os jogadores 2 e 4 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
-                    game.jogadores[3].hand.point += 1                                   
+                    game.jogadores[1].hands[contRodada%3].point += 1 # Os jogadores 2 e 4 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
+                    game.jogadores[3].hands[contRodada%3].point += 1                                   
                     print("Dupla 2 ganhou essa rodada")
                     for i in range(0,4):
                           listaconexoes[i].send("A dupla 2 ganhou essa rodada".encode('utf-8'))
                 else: #Empate
                     print("Rolou um empate")
                     for i in range(0,4):
-                        game.jogadores[i].hand.point += 1 
+                        game.jogadores[i].hands[contRodada%3].point += 1 
                     for i in range(0,4):
                           listaconexoes[i].send("Rolou um empate".encode('utf-8'))
                 for i in range(0,4): # Incrementar o numero de rodadas na mão
-                    game.jogadores[i].hand.rodadas += 1
+                    game.jogadores[i].hands[contRodada%3].rodada += 1
                 contRodada += 1
+                time.sleep(1) #Delay   
                 if vitory_verify(game.jogadores[0]) or vitory_verify(game.jogadores[2]):
                     print("Dupla 1 ganhou o truco")
 
@@ -427,22 +426,22 @@ while 1:
                         escolhasRodada.append(cartaescolhida)
                     ganhador = win(vira, escolhasRodada[0], escolhasRodada[1], escolhasRodada[2],escolhasRodada[3])
                     if ganhador == 1: #Dupla 1 ganhou
-                        game.jogadores[0].hand.point += point_truco # Os jogadores 1 e 3 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
-                        game.jogadores[2].hand.point += point_truco
+                        game.jogadores[0].hands[contRodada%3].point += point_truco # Os jogadores 1 e 3 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
+                        game.jogadores[2].hands[contRodada%3].point += point_truco
                         for i in range(0,4):
                               listaconexoes[i].send("A dupla 1 ganhou essa rodada".encode('utf-8'))
                     elif ganhador ==2: #Dupla 2 ganhou
-                        game.jogadores[1].hand.point += point_truco # Os jogadores 2 e 4 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
-                        game.jogadores[3].hand.point += point_truco                                   
+                        game.jogadores[1].hands[contRodada%3].point += point_truco # Os jogadores 2 e 4 vão ganhar um pto na mão, isso vai servir para controlar os ptos dos jogadores
+                        game.jogadores[3].hands[contRodada%3].point += point_truco                                   
                         for i in range(0,4):
                               listaconexoes[i].send("A dupla 2 ganhou essa rodada".encode('utf-8'))
                     else: #Empate
                         for i in range(0,4):
-                            game.jogadores[i].hand.point += 1 
+                            game.jogadores[i].hands[contRodada%3].point += 1 
                         for i in range(0,4):
                               listaconexoes[i].send("Rolou um empate".encode('utf-8'))
                     for i in range(0,4): # Incrementar o numero de rodadas na mão
-                        game.jogadores[i].hand.rodadas += 1
+                        game.jogadores[i].hands[contRodada%3].rodada += 1
                     contRodada += 1 #incrementar contador de rodadas
                     if vitory_verify(game.jogadores[0]) or vitory_verify(game.jogadores[2]):
 
@@ -462,4 +461,4 @@ while 1:
                 # caso aceite, 3x os pontos da mão
                 # caso fuja, distribuir pontos para a dupla que pediu o truco
                 # Tratar retruco, se pedir
- '''           
+ 

@@ -68,7 +68,7 @@ while (fimJogo==False):
     cont = 0
     for i in mesaJogadores: #For para exibir as cartas
         data = i.conexao.recv(4096) #cliente escuta servidor
-        print (mesaJogadores[cont].nomeJogador, ',sua mão é ', ler_msg(i.bytesRecebidos,data) , '\n') #exibe última mensagem
+        print (mesaJogadores[cont].nomeJogador, ',sua mão é ', data , '\n') #exibe última mensagem
         mesaJogadores[cont].bytesRecebidos += len(data)
         cont +=1
         
@@ -76,7 +76,7 @@ while (fimJogo==False):
     time.sleep(1) #Delay para receber o VIra  
     for i in mesaJogadores: #For para exibir o vira
         data = i.conexao.recv(4096) #cliente escuta servidor
-        print('\n',mesaJogadores[cont].nomeJogador,',o Vira é ', data) # !!!!! Não sei pq agora não ta acumulando, mas se usar a função ele buga
+        print('\n',mesaJogadores[cont].nomeJogador,',o Vira é ', data) 
         mesaJogadores[cont].bytesRecebidos += len(data)
         cont +=1
     
@@ -99,10 +99,18 @@ while (fimJogo==False):
         else:
             mesaJogadores[i].conexao.send(str(escolha).encode('utf-8')) #Se escolher o 2 é truco
     cont=0
+    print('------- Cartas escolhidas --------')    
     for i in mesaJogadores: #Mostar as cartas que foram escolhidas
         data = i.conexao.recv(4096) #cliente escuta servidor
-        print(mesaJogadores[cont].nomeJogador, data, '\n') # !!!!! Não sei pq agora não ta acumulando, mas se usar a função ele buga
-        print('')
+        print(mesaJogadores[cont].nomeJogador, data, '\n')
         mesaJogadores[cont].bytesRecebidos += len(data)
         cont+=1
-    cont = 0 
+    cont = 0
+    print('------- Ganhador da rodada --------')
+    for i in mesaJogadores: #Mostar quem ganhou a rodada
+        data = i.conexao.recv(4096) #cliente escuta servidor
+        print(mesaJogadores[cont].nomeJogador, data, '\n')
+        mesaJogadores[cont].bytesRecebidos += len(data)
+        ++cont
+    print('---------------')
+    time.sleep(1) #Delay para receber o VIra  
